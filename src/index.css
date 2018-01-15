@@ -1,0 +1,85 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+.i-table, .i-table * { 
+  box-sizing: border-box;
+
+}
+
+.i-table table {
+  width: 100%;
+}
+
+.i-table-header {
+  background-color: #f1f6fa;
+}
+
+.i-table-header {
+  overflow: hidden;
+}
+
+.i-table-body {
+  overflow: auto;
+}
+
+.i-table th {
+  text-align: left;
+  font-weight: 400;
+  min-height: 20px;
+  line-height: 20px;
+  font-size: 14px;
+}
+
+.i-table-cell {
+  height: 28px;
+  line-height: 28px;
+  padding: 0 15px;
+  position: relative;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/** checkbox **/
+.gcb-wrap ul {
+  width: inherit;
+  height: inherit;
+}
+.gcb-wrap li {
+  list-style: none;
+  background: url(./cb-unchecked.png) 0 center no-repeat;
+  padding-left: 16px;
+  width: inherit;
+  height: inherit;
+}
+.gcb-wrap li.checked {
+  background: url(./cb-checked.png) 0 center no-repeat;
+}
+.gcb-wrap {
+  cursor: pointer;
+  -moz-user-select:none;/*火狐*/
+  -webkit-user-select:none;/*webkit浏览器*/
+  -ms-user-select:none;/*IE10*/
+  -khtml-user-select:none;/*早期浏览器*/
+  user-select:none;
+  width: inherit;
+  height: inherit;
+}
+
+
+/** 可以删掉 **/
+
+
+.i-table-level-0 {
+  background: #fff;
+}
+
+.i-table-level-1 {
+  background: #e3e3e3;
+}
+
+.i-table-level-2 {
+  background: #d3d3d3;
+}
