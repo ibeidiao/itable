@@ -1,23 +1,26 @@
 const path = require('path');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+
+const autoprefixer = require('autoprefixer');
 
 module.exports = {
   entry: {
     itable: './src/itable.js',
   },
   externals: {
-    "jquery": {
-      commonjs: "jquery",
-      commonjs2: "jquery",
-      amd: "jquery",
-      root: "jquery"
+    'jquery': {
+      commonjs: 'jquery',
+      commonjs2: 'jquery',
+      amd: 'jquery',
+      root: 'jquery'
     }
   },
   output: {
     filename: '[name].js',
     path: path.resolve(__dirname, 'dist'),
-    // library: "ITable",
-    libraryTarget: "umd",
+    // library: 'ITable',
+    libraryTarget: 'umd',
   },
   module: {
     rules: [
@@ -27,8 +30,23 @@ module.exports = {
         exclude: /node_modules/
       },
       {
-        test: /\.css$/,
-        use: ['style-loader', 'css-loader']
+        test: /\.(css|less)$/,
+        loader: ExtractTextPlugin.extract({
+          fallback: 'style-loader',
+          use: [
+            'css-loader', 
+            { 
+              loader: 'postcss-loader',
+              options: {
+                ident: 'postcss',
+                plugins: [
+                  autoprefixer()
+                ]
+              }
+            },
+            'less-loader'
+          ]
+        })
       },
       {
         test: /\.(png|jpg)$/,
@@ -42,5 +60,6 @@ module.exports = {
   },
   plugins: [
     new CleanWebpackPlugin(['dist']),
+    new ExtractTextPlugin('itable.css'),  
   ]
 }

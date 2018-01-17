@@ -1,0 +1,250 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+.i-table, .i-table *, .i-pager, .i-pager * { 
+  box-sizing: border-box;
+}
+
+.i-table table {
+  width: 100%;
+}
+
+.i-table-header {
+  background-color: #f1f6fa;
+}
+
+.i-table-header {
+  overflow: hidden;
+}
+
+.i-table-body {
+  overflow: auto;
+}
+
+.i-table th {
+  text-align: left;
+  font-weight: 400;
+  min-height: 20px;
+  line-height: 20px;
+  font-size: 14px;
+}
+
+.i-table-cell {
+  height: 28px;
+  line-height: 28px;
+  padding: 0 15px;
+  position: relative;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.i-sort-wrap {
+  margin-right: 5px;
+}
+
+.i-sort-wrap .i-asc-icon {
+  position: absolute;
+  height: 50%;
+  width: 8px;
+  background: url(./sort-asc-inactive.png) bottom no-repeat;
+  background-size: 100%;
+  cursor: pointer;
+}
+
+.i-sort-wrap .i-asc-icon.active {
+  background-image: url(./sort-asc-active.png);
+}
+
+.i-sort-wrap .i-desc-icon {
+  position: absolute;
+  height: 50%;
+  width: 8px;
+  top: 50%;
+  background: url(./sort-desc-inactive.png) top no-repeat;
+  background-size: 100%;
+  cursor: pointer;
+}
+
+.i-sort-wrap .i-desc-icon.active {
+  background-image: url(./sort-desc-active.png);
+}
+
+.i-pager {
+  height: 40px;
+  vertical-align: middle;
+  font-size: 0;
+  padding: 6px 0;
+  background: #f1f6fa;
+}
+
+.i-pager-choose, .i-pager-count, .i-pager-limits {
+  vertical-align: middle;
+  line-height: 28px;
+  height: 28px;
+  margin: 0 8px;
+}
+
+.i-pager-count, .i-pager-limits {
+  font-size: 12px;
+}
+
+.i-pager a {
+  text-decoration: none;
+}
+
+.i-pager div {
+  display: inline-block;
+}
+
+.i-pager a, .i-pager span {
+  height: 28px;
+  line-height: 28px;
+  display: inline-block;
+  padding: 0 10px;
+  color: #333;
+  font-size: 12px;
+  vertical-align: middle;
+}
+
+.i-pager-curr {
+  position: relative;
+  background: #009688;
+  border-radius: 2px;
+}
+
+.i-pager-curr em {
+  position: inherit;
+  font-style: normal;
+  color: #fff;
+}
+
+.i-pager-curr em.i-pager-em {
+  position: absolute;
+}
+
+.i-pager-prev i.i-icon {
+  background: url(./pager-prev.png) 0 center no-repeat;
+  display: inline-block;
+  height: 28px;
+  width: 28px;
+}
+
+.i-pager-next i.i-icon {
+  background: url(./pager-next.png) 0 center no-repeat;
+  display: inline-block;
+  height: 28px;
+  width: 28px;
+}
+
+.i-pager .i-pager-spr {
+  color: #999;
+  font-weight: 700;
+}
+
+.i-pager-limits {
+  position: relative;
+}
+
+.i-pager-limits .i-pager-limits-show {
+  height: 28px;
+  padding: 0 28px 0 12px;
+  cursor: pointer;
+  border: 1px solid #e3e3e3;
+  border-radius: 2px;
+}
+
+
+.i-pager-limits .i-pager-limits-show:hover .i-pager-limits-choose {
+  display: block;
+}
+
+.i-pager-limits .i-pager-limits-show i {
+  background: url(./select-down.png) 0 center no-repeat;
+  display: inline-block;
+  width: 16px;
+  height: 28px;
+  position: absolute;
+  background-size: 80%;
+  right: 5px;
+  top: 0;
+}
+
+.i-pager-limits .i-pager-limits-choose {
+  display: none;
+  width: 100%;
+  position: absolute;
+  list-style: none;
+  color: #009688;
+  white-space: nowrap;
+  top: 28px;
+  left: 0;
+  border-left: 1px solid #e3e3e3;
+  border-right: 1px solid #e3e3e3;
+}
+
+.i-pager-limits-choose li {
+  width: 100%;
+  padding: 0px 12px;
+  border-bottom: 1px solid #e3e3e3;
+  text-align: center;
+}
+
+.i-pager-limits-choose li.active {
+    background: #009688;
+    color: #fff;
+}
+
+.i-pager-limits-choose li:hover {
+  background: #009688;
+  color: #fff;
+}
+
+.i-disabled {
+  cursor: not-allowed;
+}
+
+
+/** checkbox **/
+.gcb-wrap ul {
+  width: inherit;
+  height: inherit;
+}
+.gcb-wrap li {
+  list-style: none;
+  background: url(./cb-unchecked.png) 0 center no-repeat;
+  padding-left: 16px;
+  width: inherit;
+  height: inherit;
+}
+.gcb-wrap li.checked {
+  background: url(./cb-checked.png) 0 center no-repeat;
+}
+.gcb-wrap {
+  cursor: pointer;
+  -moz-user-select:none;/*火狐*/
+  -webkit-user-select:none;/*webkit浏览器*/
+  -ms-user-select:none;/*IE10*/
+  -khtml-user-select:none;/*早期浏览器*/
+  user-select:none;
+  width: inherit;
+  height: inherit;
+}
+
+
+/** 可以删掉 **/
+
+
+.i-table-level-0 {
+  background: #fff;
+}
+
+.i-table-level-1 {
+  background: #e3e3e3;
+}
+
+.i-table-level-2 {
+  background: #d3d3d3;
+}

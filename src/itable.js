@@ -1,20 +1,21 @@
 import $ from 'jquery';
 
+import Pager from './pager';
 import CheckBox from './CheckBox';
 
 import createTable from './createTable';
-import './index.css';
+import './index.less';
 
 let TABLE_INDEX = 0;
 
 const DEFAULT_CONFIG = {
-
+  sortStatus: {}
 };
 
 const getTableIndex = () => {
   TABLE_INDEX += 1;
   return TABLE_INDEX;
-}
+};
 
 class ITable {
   constructor(elem) {
@@ -22,21 +23,20 @@ class ITable {
     this._INDEX_ = getTableIndex();
   }
 
-  active = true;
+  active = true
 
-  CONFIG = {}
+  CONFIG = DEFAULT_CONFIG
 
   // checkboxs
   cbs = []
 
   render = (config = {}) => {
-    this.CONFIG = { ...DEFAULT_CONFIG, ...config };
-
-    this.main();
-  }
-
-  reload = (config = {}) => {
-    this.CONFIG = { ...CONFIG, ...config };
+    if (!this.active) {
+      throw new Error('这个table已经被销毁了。');
+    }
+    this.$elem.html('');
+    
+    this.CONFIG = { ...this.CONFIG, ...config };
 
     this.main();
   }
@@ -62,10 +62,17 @@ class ITable {
     return this.CONFIG.data;
   }
 
+  getStatus = () => {
+    const pagerStatus = this.pager.getStatus();
+    const sortStatus = this.getSortStatus();
+
+    return { pager: pagerStatus, sort: sortStatus };
+  }
+
   /** 下面开始是内部使用的方法 */
   main = () => {
     const $tableBox = $('<div class="i-table-box"></div>');
-
+    
     $tableBox
       .append(this.createHeader())
       .append(this.createBody());
@@ -73,6 +80,8 @@ class ITable {
     this.$elem
       .append($tableBox)
       .append(this.createStyle());
+
+    if (this.CONFIG.pager) this.createPager();
     
     const self = this;
 
@@ -150,11 +159,28 @@ class ITable {
       }
     });
 
+    // sort 相关
+    this.$elem.find('.i-table-header .i-sort-wrap i').on('click', function() {
+      // console.log($(this).data('sort'));
+      const $this = $(this);
+      const field = $this.parents('th').data('field');
+      const sort = $this.data('sort');
+      if ($this.hasClass('active')) {
+        $this.removeClass('active');
+        self.CONFIG.sortStatus = { ...self.CONFIG.sortStatus, [field]: undefined };
+      } else {
+        $this.siblings('i').removeClass('active');
+        $this.addClass('active');
+        self.CONFIG.sortStatus = { ...self.CONFIG.sortStatus, [field]: sort };
+      }
+      typeof self.CONFIG.onChange === 'function' && self.CONFIG.onChange(self.getStatus());
+    });
+
     this.CONFIG.done && this.CONFIG.done();
   }
 
   createHeader = () => {
-    const { columns } = this.CONFIG;
+    const { columns, sortStatus = {} } = this.CONFIG;
     const { _INDEX_ } = this;
     const $header = $('<div class="i-table-header"></div>');
     const $table = createTable();
@@ -163,11 +189,13 @@ class ITable {
       + columns.reduce(function(str, column, i) {
         const isCheckBox = !!column.checkbox;
         const field = column.field ? column.field : i;
+        const sort = !!column.sort;
         return (
           `${str}
           <th class="i-table-cell-${_INDEX_}-${field}" style="${column.align ? `text-align: ${column.align}` : ''}" data-field="${field}">
             <div class="i-table-cell ${isCheckBox ? 'i-table-cell-check-box' : ''}">
               ${isCheckBox ? '' : `<span>${column.title}</span>`}
+              ${sort ? `<span class="i-sort-wrap"><i class="i-asc-icon ${sortStatus[field] === 'asc' ? 'active': ''}" data-sort="asc"></i><i class="i-desc-icon ${sortStatus[field] === 'desc' ? 'active': ''}" data-sort="desc"></i></span>`: ''}
             </div>
           </th>`
         );
@@ -294,19 +322,34 @@ class ITable {
   setTrChildren = ($tr, children) => {
     this.getTrData($tr).children = children;
   }
+
+  createPager = () => {
+    this.$elem.append(`<div class="i-pager-box" id="i-table-pager-${this._INDEX_}"></div>`);
+    this.onPagerChange = (pagerStatus) => {
+      const sort = this.getSortStatus();
+      this.CONFIG.onChange({ pager: pagerStatus, sort });
+    }
+    this.pager = new Pager(`#i-table-pager-${this._INDEX_}`);
+    this.pager.render({ ...this.CONFIG.pager, onChange: this.onPagerChange });
+  }
+
+  getSortStatus = () => {
+    const { sortStatus = {} } = this.CONFIG;
+    return { ...sortStatus };
+  }
   /** 内部方法结束 */
 }
 
 class ITableWrap {
   constructor(elem) {
     const table = new ITable(elem);
-    const { render, reload, destroy, getChecked, getData } = table;
+    const { render, reload, destroy, getChecked, getData, getStatus } = table;
 
     this.render = render;
-    this.reload = reload;
     this.destroy = destroy;
     this.getChecked = getChecked;
     this.getData = getData;
+    this.getStatus = getStatus;
   }
 }
 

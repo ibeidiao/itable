@@ -3,6 +3,8 @@ const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 
+const autoprefixer = require('autoprefixer');
+
 module.exports = {
   entry: {
     app: './src/index.js',
@@ -19,8 +21,21 @@ module.exports = {
         exclude: /node_modules/
       },
       {
-        test: /\.css$/,
-        use: ['style-loader', 'css-loader']
+        test: /\.(css|less)$/,
+        use: [
+          'style-loader', 
+          'css-loader', 
+          { 
+            loader: 'postcss-loader',
+            options: {
+              ident: 'postcss',
+              plugins: [
+                autoprefixer()
+              ]
+            }
+          },
+          'less-loader'
+        ]
       },
       {
         test: /\.(png|svg|jpg|gif)$/,
