@@ -84,8 +84,8 @@ class Pager {
 
     const $wrap = $('<div class="i-pager-choose"></div>');
 
-    const $prev = $(`<a href="javascript:;" class="i-pager-prev ${curr - 1 <= 0 ? 'i-disabled' : ''}" data-page="${curr - 1}"><i class="i-icon"></i></a>`);
-    const $next = $(`<a href="javascript:;" class="i-pager-next ${curr + 1 > pageCount ? 'i-disabled' : ''}" data-page="${curr + 1}"><i class="i-icon"></i></a>`);
+    const $prev = $(`<a href="javascript:;" class="i-pager-prev ${curr - 1 <= 0 ? 'i-disabled' : ''}" data-page="${curr - 1}"><i class="i-table-icon icon-pager-prev"></i></a>`);
+    const $next = $(`<a href="javascript:;" class="i-pager-next ${curr + 1 > pageCount ? 'i-disabled' : ''}" data-page="${curr + 1}"><i class="i-table-icon icon-pager-next"></i></a>`);
 
     const $curr = $(`<span class="i-pager-curr"><em class="i-pager-em"></em><em>${curr}</em></span>`);
 
@@ -127,11 +127,11 @@ class Pager {
     const { limits, size } = this.CONFIG;
  
     const $wrap = $('<div class="i-pager-limits"></div>');
-    const showStr = `<div class="i-pager-limits-show">${size} 条／页<i></i></div>`
+    const showStr = `<div class="i-pager-limits-show">${size} 条／页<i class="i-table-icon icon-select-down"></i></div>`
     const limitStr = `<ul class="i-pager-limits-choose">${limits.reduce((str, item) => `${str}<li data-limit="${item}" class="${item === size ? 'active': ''}">${item} 条／页</li>`, '')}</ul>`;
     $wrap
       .append($(showStr).append($(limitStr)));
-      // .append($(limitStr));
+    
     return $wrap;
   }
 

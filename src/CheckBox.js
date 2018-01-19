@@ -103,7 +103,7 @@ CheckBox.prototype = {
       container = options.container,
       htmlStr = 
         `<div class="gcb-wrap ${that.uniquecClass}" >
-        <ul><li data-val="${data.val}" class="${data.checked ? 'checked' : ''} ${data.disabled ? 'disabled' : ''}" >${data.text}</li></ul>
+        <ul><li data-val="${data.val}" class="${data.checked ? 'checked' : ''} ${data.disabled ? 'disabled' : ''}" ><i class="i-table-icon icon-cb-unchecked"></i>${data.text}</li></ul>
         </div>`;
     
     container.html(htmlStr);
@@ -189,6 +189,11 @@ CheckBox.prototype = {
     }
 
     checked ? $li.addClass('checked') : $li.removeClass('checked');
+
+    checked ? 
+      $li.find('i').removeClass('icon-cb-unchecked').addClass('icon-cb-checked') 
+        : 
+      $li.find('i').removeClass('icon-cb-checked').addClass('icon-cb-unchecked'); 
 
     return this;
 

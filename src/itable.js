@@ -101,7 +101,7 @@ class ITable {
       // open时 为开的状态，那么 -> colse
       // close时 为关的状态，那么 -> open
       const $this = $(this);
-      const collapsed = $(this).hasClass('i-table-collapse-open');
+      const collapsed = $(this).hasClass('icon-collapse-open');
       const $parentTr = $this.parents('tr');
       const level = $parentTr.data('level');
       const needLoaded = !$parentTr.data('childrenLoaded');
@@ -109,13 +109,13 @@ class ITable {
         let $nextTr = $parentTr.next('tr');
         // 收缩
         $this
-          .removeClass('i-table-collapse-open')
-          .addClass('i-table-collapse-close');
+          .removeClass('icon-collapse-open')
+          .addClass('icon-collapse-close');
         while ($nextTr.data('level') > level) {
           $nextTr.hide();
           $nextTr.find('.i-table-collapse')
-            .removeClass('i-table-collapse-open')
-            .addClass('i-table-collapse-close');
+            .removeClass('icon-collapse-open')
+            .addClass('icon-collapse-close');
           $nextTr = $nextTr.next('tr');
         }
       } else {
@@ -126,13 +126,12 @@ class ITable {
             && 
             CONFIG.loadChildren(self.getTrData($parentTr), (children) => {
             $parentTr.after($(self.createTrs(children, level + 1)));
-            // CONFIG.data[dataIndex].children = children;
             self.setTrChildren($parentTr, children);
             $parentTr.data('childrenLoaded', true).attr('data-children-loaded', true);
             let $nextTr = $parentTr.next('tr');
             $this
-              .removeClass('i-table-collapse-close')
-              .addClass('i-table-collapse-open');
+              .removeClass('icon-collapse-close')
+              .addClass('icon-collapse-open');
 
             const cbi = $parentTr.data('cbIndex');
             const checked = $parentTr.find('.gcb-wrap li').hasClass('checked');
@@ -149,8 +148,8 @@ class ITable {
         } else {
           let $nextTr = $parentTr.next('tr');
           $this
-            .removeClass('i-table-collapse-close')
-            .addClass('i-table-collapse-open');
+            .removeClass('icon-collapse-close')
+            .addClass('icon-collapse-open');
           while ($nextTr.data('level') === level + 1) {
             $nextTr.show();
             $nextTr = $nextTr.next('tr');
@@ -242,7 +241,7 @@ class ITable {
           str += (
             `<td class="i-table-cell-${_INDEX_}-${field}" style="${column.align ? `text-align: ${column.align}` : ''}" data-field="${field}">
               <div class="i-table-cell ${isCheckBox ? 'i-table-cell-check-box' : ''}">
-                ${hasChildren && column.collapse ? '<i class="i-table-collapse i-table-collapse-close" style="position: absolute; left: 0;">+</i>' : ''}
+                ${hasChildren && column.collapse ? '<i class="i-table-collapse i-table-icon icon-collapse-close"></i>' : ''}
                 ${isCheckBox ? '' : `${content}`}
               </div>
             </td>`

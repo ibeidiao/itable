@@ -1,3 +1,5 @@
+@import 'https://at.alicdn.com/t/font_545826_p563didw2ayh9f6r.css';
+
 * {
   margin: 0;
   padding: 0;
@@ -31,6 +33,12 @@
   font-size: 14px;
 }
 
+.i-table-collapse {
+  position: absolute; 
+  left: 0;
+  cursor: pointer;
+}
+
 .i-table-cell {
   height: 28px;
   line-height: 28px;
@@ -43,33 +51,33 @@
 
 .i-sort-wrap {
   margin-right: 5px;
-}
-
-.i-sort-wrap .i-asc-icon {
-  position: absolute;
-  height: 50%;
-  width: 8px;
-  background: url(./sort-asc-inactive.png) bottom no-repeat;
-  background-size: 100%;
-  cursor: pointer;
-}
-
-.i-sort-wrap .i-asc-icon.active {
-  background-image: url(./sort-asc-active.png);
-}
-
-.i-sort-wrap .i-desc-icon {
-  position: absolute;
-  height: 50%;
-  width: 8px;
-  top: 50%;
-  background: url(./sort-desc-inactive.png) top no-repeat;
-  background-size: 100%;
-  cursor: pointer;
-}
-
-.i-sort-wrap .i-desc-icon.active {
-  background-image: url(./sort-desc-active.png);
+  position: relative;
+  .i-asc-icon {
+    position: absolute;
+    cursor: pointer;
+    width: 0;
+    height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-bottom: 4px solid #d3d3d3;
+    top: 5px;
+    &.active, &:hover {
+      border-bottom-color: #515151;
+    }
+  }
+  .i-desc-icon {
+    position: absolute;
+    cursor: pointer;
+    width: 0;
+    height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid #d3d3d3;
+    bottom: 5px;
+    &.active, &:hover {
+      border-top-color: #515151;
+    }
+  }
 }
 
 .i-pager {
@@ -125,18 +133,8 @@
   position: absolute;
 }
 
-.i-pager-prev i.i-icon {
-  background: url(./pager-prev.png) 0 center no-repeat;
-  display: inline-block;
-  height: 28px;
-  width: 28px;
-}
-
-.i-pager-next i.i-icon {
-  background: url(./pager-next.png) 0 center no-repeat;
-  display: inline-block;
-  height: 28px;
-  width: 28px;
+.i-pager-prev i, .i-pager-next i {
+  font-size: 12px;
 }
 
 .i-pager .i-pager-spr {
@@ -162,14 +160,11 @@
 }
 
 .i-pager-limits .i-pager-limits-show i {
-  background: url(./select-down.png) 0 center no-repeat;
   display: inline-block;
-  width: 16px;
-  height: 28px;
   position: absolute;
-  background-size: 80%;
   right: 5px;
-  top: 0;
+  font-size: 12px;
+  color: #d3d3d3;
 }
 
 .i-pager-limits .i-pager-limits-choose {
@@ -212,22 +207,15 @@
   width: inherit;
   height: inherit;
 }
+
 .gcb-wrap li {
   list-style: none;
-  background: url(./cb-unchecked.png) 0 center no-repeat;
-  padding-left: 16px;
   width: inherit;
   height: inherit;
 }
-.gcb-wrap li.checked {
-  background: url(./cb-checked.png) 0 center no-repeat;
-}
+
 .gcb-wrap {
   cursor: pointer;
-  -moz-user-select:none;/*火狐*/
-  -webkit-user-select:none;/*webkit浏览器*/
-  -ms-user-select:none;/*IE10*/
-  -khtml-user-select:none;/*早期浏览器*/
   user-select:none;
   width: inherit;
   height: inherit;
