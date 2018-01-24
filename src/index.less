@@ -1,4 +1,4 @@
-@import 'https://at.alicdn.com/t/font_545826_p563didw2ayh9f6r.css';
+@import 'http://at.alicdn.com/t/font_545826_7jatc7cnpnq7u8fr.css';
 
 * {
   margin: 0;
@@ -7,6 +7,10 @@
 
 .i-table, .i-table *, .i-pager, .i-pager * { 
   box-sizing: border-box;
+}
+
+.i-table {
+  position: relative;
 }
 
 .i-table table {
@@ -77,6 +81,58 @@
     &.active, &:hover {
       border-top-color: #515151;
     }
+  }
+}
+
+.i-filter-wrap {
+  .icon-filter {
+    font-size: 12px;
+    cursor: pointer;
+    color: #d3d3d3;
+    &.active, &:hover {
+      color: #515151;
+    }
+  }
+}
+
+.i-filter-choose-wrap {
+  &>ul {
+    position: absolute;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    border-radius: 4px;
+    li {
+      list-style: none;
+      padding: 2px 8px;
+      font-size: 14px;
+      .i-table-icon {
+        font-size: 14px;
+        margin-right: 5px;
+      }
+      &.cb-wrap {
+        &:hover {
+          background: #e6f7ff;
+        }
+      }
+      &.btn-wrap {
+        text-align: center;
+        border-top: 1px solid #d3d3d3;
+        padding: 0;
+        a {
+          display: inline-block;
+          width: 50%;
+          cursor: pointer;
+          padding: 2px 0;
+          &:not(:first-child) {
+            border-left: 1px solid #d3d3d3;
+          }
+          &:hover {
+            background: #e6f7ff;
+          }
+        }
+      }
+    }
+    
   }
 }
 

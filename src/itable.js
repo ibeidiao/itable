@@ -9,13 +9,19 @@ import './index.less';
 let TABLE_INDEX = 0;
 
 const DEFAULT_CONFIG = {
-  sortStatus: {}
+  sortStatus: {},
+  filterStatus: {},
 };
 
 const getTableIndex = () => {
   TABLE_INDEX += 1;
   return TABLE_INDEX;
 };
+
+// 数组去重
+const removeDuplicate = (array) => {
+  return Array.from(new Set(array));
+}
 
 class ITable {
   constructor(elem) {
@@ -65,8 +71,9 @@ class ITable {
   getStatus = () => {
     const pagerStatus = this.pager.getStatus();
     const sortStatus = this.getSortStatus();
+    const filterStatus = this.getFilterStatus();
 
-    return { pager: pagerStatus, sort: sortStatus };
+    return { pager: pagerStatus, sort: sortStatus, filter: filterStatus };
   }
 
   /** 下面开始是内部使用的方法 */
@@ -89,6 +96,45 @@ class ITable {
     const hasCheckBox = this.$elem.find('.i-table-cell-check-box').length > 0;
     const clickFactory = hasCheckBox && this.getCbClickFactory();
     hasCheckBox && this.initCheckBox(clickFactory);
+
+    // filter 相关
+    const hasFilter = this.$elem.find('.i-filter-wrap').length > 0;
+    hasFilter && this.createFilterChooseWraps(this.$elem.find('.i-filter-wrap'));
+
+    $('.i-filter-wrap').on('click', function() {
+      if ($('.i-filter-choose-wrap').is(':visible')) return;
+      const $this = $(this);
+      const $th = $this.parents('th');
+      const th = $th[0];
+      const field = $th.data('field');
+      const top = th.offsetTop + th.clientHeight + 2;
+      const left = th.offsetLeft + this.offsetLeft;
+
+      const $warp = self.$elem.find(`.i-filter-choose-wrap[data-field="${field}"]`);
+      if ($warp.is(':visible')){
+        return false;
+      } 
+      $('.i-filter-choose-wrap').hide();
+      $warp.show();
+      $warp.find('ul').css('top', top).css('left', left);
+
+      return false;
+    });
+
+    $(document).on('click', function() {
+      if ($('.i-filter-choose-wrap').is(':visible')) {
+        const field = $('.i-filter-choose-wrap:visible').data('field');
+
+        self.CONFIG.onChange(self.getStatus());
+
+        if (self.CONFIG.filterStatus[field].length > 0) {
+          self.$elem.find(`.i-table-header th[data-field="${field}"] .icon-filter`).addClass('active');
+        } else {
+          self.$elem.find(`.i-table-header th[data-field="${field}"] .icon-filter`).removeClass('active');
+        }
+        $('.i-filter-choose-wrap').hide();
+      }
+    });
     
     // 滚动相关
     this.$elem.find('.i-table-body').scroll(function() {
@@ -160,7 +206,6 @@ class ITable {
 
     // sort 相关
     this.$elem.find('.i-table-header .i-sort-wrap i').on('click', function() {
-      // console.log($(this).data('sort'));
       const $this = $(this);
       const field = $this.parents('th').data('field');
       const sort = $this.data('sort');
@@ -179,7 +224,7 @@ class ITable {
   }
 
   createHeader = () => {
-    const { columns, sortStatus = {} } = this.CONFIG;
+    const { columns, sortStatus = {}, filterStatus = {} } = this.CONFIG;
     const { _INDEX_ } = this;
     const $header = $('<div class="i-table-header"></div>');
     const $table = createTable();
@@ -189,12 +234,14 @@ class ITable {
         const isCheckBox = !!column.checkbox;
         const field = column.field ? column.field : i;
         const sort = !!column.sort;
+        const filter = !!column.filter;
         return (
           `${str}
           <th class="i-table-cell-${_INDEX_}-${field}" style="${column.align ? `text-align: ${column.align}` : ''}" data-field="${field}">
             <div class="i-table-cell ${isCheckBox ? 'i-table-cell-check-box' : ''}">
               ${isCheckBox ? '' : `<span>${column.title}</span>`}
               ${sort ? `<span class="i-sort-wrap"><i class="i-asc-icon ${sortStatus[field] === 'asc' ? 'active': ''}" data-sort="asc"></i><i class="i-desc-icon ${sortStatus[field] === 'desc' ? 'active': ''}" data-sort="desc"></i></span>`: ''}
+              ${filter ? `<span class="i-filter-wrap"><i class="i-table-icon icon-filter ${filterStatus[field].length > 0 ? 'active' : ''}"></i></span>`: ''}
             </div>
           </th>`
         );
@@ -268,6 +315,75 @@ class ITable {
     return $style.html(styleStr);
   }
 
+  createFilterChooseWraps = (filters) => {
+    $.each(filters, (index, filter) => {
+      const field = $(filter).parents('th').data('field');
+      const arr = this.CONFIG.columns.filter((column) => {
+        return column.field && column.field === field;
+      })[0].filter;
+      this.createFilterChooseWrap(filter, arr);
+    });
+  }
+
+  createFilterChooseWrap = (filter, arr) => {
+    const pWrap = $(filter).parents('th');
+    const field = pWrap.data('field');
+    const status = this.CONFIG.filterStatus[field] || [];
+    const htmlStr = `<div class="i-filter-choose-wrap" data-field="${field}" style="position: absolute; top: 0px; left: 0px; width: 100%; display: none;"><ul>${arr.reduce((pre) => `${pre}<li class="cb-wrap"></li>`, '')}<li class="btn-wrap"><a class="confirm-btn">确定</a><a class="reset-btn">重置</a></li></ul></div>`;
+    this.$elem.append(htmlStr);
+    const self = this;
+    this.$elem.find(`.i-filter-choose-wrap[data-field="${field}"] li.cb-wrap`).each(function(index, li) {
+      const data = arr[index];
+      if (status.indexOf(data.val) > -1) {
+        data.checked = true;
+      } else {
+        data.checked = false;
+      }
+      new CheckBox({ container: $(li), data: arr[index], clickCallback: function(item) { 
+        const oldStatus = self.CONFIG.filterStatus[field] || [];
+        if (item.checked) {
+          self.CONFIG.filterStatus[field] = removeDuplicate([ ...oldStatus, item.val ]);
+        } else {
+          const i = oldStatus.indexOf(item.val);
+          if (i > -1) {
+            oldStatus.splice(i, 1);
+            self.CONFIG.filterStatus[field] = [ ...oldStatus ];
+          }
+        }
+      } }).create();
+    });
+
+    // 确认事件
+    this.$elem.find(`.i-filter-choose-wrap[data-field="${field}"] li.btn-wrap .confirm-btn`).on('click', function() {
+      const $this = $(this);
+
+      self.CONFIG.onChange(self.getStatus());
+      if (self.CONFIG.filterStatus[field].length > 0) {
+        self.$elem.find(`.i-table-header th[data-field="${field}"] .icon-filter`).addClass('active');
+      } else {
+        self.$elem.find(`.i-table-header th[data-field="${field}"] .icon-filter`).removeClass('active');
+      }
+      
+      $this.parents('.i-filter-choose-wrap').hide();
+    });
+
+    // 重置事件
+    this.$elem.find(`.i-filter-choose-wrap[data-field="${field}"] li.btn-wrap .reset-btn`).on('click', function() {
+      const $this = $(this);
+
+      self.CONFIG.filterStatus[field] = [];
+      self.CONFIG.onChange(self.getStatus());
+
+      if (self.CONFIG.filterStatus[field].length > 0) {
+        self.$elem.find(`.i-table-header th[data-field="${field}"] .icon-filter`).addClass('active');
+      } else {
+        self.$elem.find(`.i-table-header th[data-field="${field}"] .icon-filter`).removeClass('active');
+      }
+      // $('.i-filter-choose-wrap').hide();
+      $this.parents('.i-filter-choose-wrap').hide();
+    });
+  }
+
   initCheckBox = (clickFactory) => {
     const { $elem, cbs } = this;
     const headerTr = $elem.find('.i-table-header tr')[0];
@@ -326,7 +442,8 @@ class ITable {
     this.$elem.append(`<div class="i-pager-box" id="i-table-pager-${this._INDEX_}"></div>`);
     this.onPagerChange = (pagerStatus) => {
       const sort = this.getSortStatus();
-      this.CONFIG.onChange({ pager: pagerStatus, sort });
+      const filter = this.getFilterStatus();
+      this.CONFIG.onChange({ pager: pagerStatus, sort, filter });
     }
     this.pager = new Pager(`#i-table-pager-${this._INDEX_}`);
     this.pager.render({ ...this.CONFIG.pager, onChange: this.onPagerChange });
@@ -335,6 +452,11 @@ class ITable {
   getSortStatus = () => {
     const { sortStatus = {} } = this.CONFIG;
     return { ...sortStatus };
+  }
+
+  getFilterStatus = () => {
+    const { filterStatus = {} } = this.CONFIG;
+    return { ...filterStatus };
   }
   /** 内部方法结束 */
 }

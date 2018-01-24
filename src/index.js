@@ -57,11 +57,11 @@ var myTable = new ITable('#table');
 myTable.render({
   columns: [
     { checkbox: true, width: unitWidth, click: function(item) { console.log(item); } },
-    { field: 'person', title: '候选人',  render: personRender, width: unitWidth * 2, align: 'center', collapse: true, sort: true },
-    { field: 'type', title: '套餐类型', width: unitWidth * 4, align: 'center', sort: true },
-    { field: 'createTime', title: '创建时间', width: unitWidth * 3, align: 'center', sort: true },
-    { field: 'jiaofu', title: '预计交付时间', width: unitWidth * 3, align: 'center' },
-    { field: 'status', title: '背调状态', render: statusRender, width: unitWidth * 5 },
+    { field: 'person', title: '候选人',  render: personRender, width: unitWidth * 2, collapse: true, sort: true },
+    { field: 'type', title: '套餐类型', width: unitWidth * 4, sort: true },
+    { field: 'createTime', title: '创建时间', width: unitWidth * 3, sort: true },
+    { field: 'jiaofu', title: '预计交付时间', width: unitWidth * 3, filter: [{ text: '状态1', val: 1 }, { text: '状态2', val: 2 }] },
+    { field: 'status', title: '背调状态', render: statusRender, width: unitWidth * 5, filter: [{ text: '状态1', val: 1 }, { text: '状态2', val: 2 }] },
     { title: '操作', render: actionsWrapRender, width: unitWidth * 6 }
   ],
   data: data,
@@ -84,10 +84,15 @@ myTable.render({
   },
   pager: { count: 101 },
   onChange: function(status) {
+    console.log(status);
     myTable.render({ pager: status.pager });
   },
   sortStatus: {
     person: 'asc',
+  },
+  filterStatus: {
+    status: [1],
+    jiaofu: [2]
   }
 });
 
