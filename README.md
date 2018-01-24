@@ -73,11 +73,11 @@ loadChildren| function | 获取此行子数据方法，只有在特定情况下�
   参数 | 类型 | 说明 | 示例值  
 ------- | ------- | ------- | -------
 checkbox | boolean | 多选框 | `true`
+collapse | boolean | 展开按钮是否在此列，只能有一个为`true` | `true`
 width | number | 列宽度／必填 | `100`
 field | string | 取值的字段名 |`'person'`
 title | string | 表头名 | `'候选人'`
 sort | boolean | 此列是否有排序 | `true`
-collapse | boolean | 展开按钮是否在此列，只能有一个为`true` | `true`
 align | string | `'right'` / `'center'` / `'left'` | `'center'`
 click | function | checkbox独有，点击时回调，提供此列数据 | `function(item){...}`
 render | function | 单元格渲染函数，提供此列数据以及单元数据(如果提供了`field`参数)，还有一个`index` | `function(field, item, i) {...} `

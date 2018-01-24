@@ -237,6 +237,7 @@ class ITable {
     const headStr = '<thead><tr>'
       + columns.reduce(function(str, column, i) {
         const isCheckBox = !!column.checkbox;
+        const isCollapse = !!column.collapse;
         const field = column.field ? column.field : i;
         const sort = !!column.sort;
         const filter = !!column.filter;
@@ -244,7 +245,7 @@ class ITable {
           `${str}
           <th class="i-table-cell-${_INDEX_}-${field}" style="${column.align ? `text-align: ${column.align}` : ''}" data-field="${field}">
             <div class="i-table-cell ${isCheckBox ? 'i-table-cell-check-box' : ''}">
-              ${isCheckBox ? '' : `<span>${column.title}</span>`}
+              ${isCheckBox || isCollapse ? '' : `<span>${column.title}</span>`}
               ${sort ? `<span class="i-sort-wrap"><i class="i-asc-icon ${sortStatus[field] === 'asc' ? 'active': ''}" data-sort="asc"></i><i class="i-desc-icon ${sortStatus[field] === 'desc' ? 'active': ''}" data-sort="desc"></i></span>`: ''}
               ${filter ? `<span class="i-filter-wrap"><i class="i-table-icon icon-filter ${filterStatus[field].length > 0 ? 'active' : ''}"></i></span>`: ''}
             </div>
@@ -283,6 +284,7 @@ class ITable {
       `<tr data-index="${index}" class="i-table-level-${level}" data-level="${level}" ${needLoadChild ? 'data-children-loaded="false"' : 'data-children-loaded="true"'} style="${level !== 0 ? 'display: none;' : ''}">
         ${columns.reduce((str, column, j) => {
           const isCheckBox = !!column.checkbox;
+          const isCollapse = !!column.collapse;
           const field = column.field ? column.field : j;
           let content;
           if (column.render && typeof column.render === 'function') {
@@ -294,7 +296,7 @@ class ITable {
             `<td class="i-table-cell-${_INDEX_}-${field}" style="${column.align ? `text-align: ${column.align}` : ''}" data-field="${field}">
               <div class="i-table-cell ${isCheckBox ? 'i-table-cell-check-box' : ''}">
                 ${hasChildren && column.collapse ? '<i class="i-table-collapse i-table-icon icon-collapse-close"></i>' : ''}
-                ${isCheckBox ? '' : `${content}`}
+                ${isCheckBox || isCollapse ? '' : `${content}`}
               </div>
             </td>`
           );
@@ -384,7 +386,7 @@ class ITable {
       } else {
         self.$elem.find(`.i-table-header th[data-field="${field}"] .icon-filter`).removeClass('active');
       }
-      // $('.i-filter-choose-wrap').hide();
+
       $this.parents('.i-filter-choose-wrap').hide();
     });
   }

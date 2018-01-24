@@ -13,7 +13,7 @@ const data = [
   { person: '张三丰3', type: '基础背调服务', createTime: '2017.09.12', jiaofu: '2017.09.18', status: '待上传资料' },
   { person: '张三丰4', type: '基础背调服务', createTime: '2017.09.12', jiaofu: '2017.09.18', status: '待候选人授权' },
   { person: '张三丰5', type: '基础背调服务', createTime: '2017.09.12', jiaofu: '2017.09.18', status: '调查进行中', children: true },
-  { person: '张三丰6', type: '基础背调服务', createTime: '2017.09.12', jiaofu: '2017.09.18', status: '待候选人授权', children: [
+  { person: '张三6', type: '基础背调服务', createTime: '2017.09.12', jiaofu: '2017.09.18', status: '待候选人授权', children: [
     { person: '张三丰7', type: '基础背调服务', createTime: '2017.09.12', jiaofu: '2017.09.18', status: '待上传资料' },
     { person: '张三丰8', type: '基础背调服务', createTime: '2017.09.12', jiaofu: '2017.09.18', status: '待候选人授权', children: true },
   ] },
@@ -57,12 +57,13 @@ var myTable = new ITable('#table');
 myTable.render({
   columns: [
     { checkbox: true, width: unitWidth, click: function(item) { console.log(item); } },
-    { field: 'person', title: '候选人',  render: personRender, width: unitWidth * 2, collapse: true, sort: true },
+    { collapse: true, width: unitWidth * .5, align: 'center' },
+    { field: 'person', title: '候选人',  render: personRender, width: unitWidth * 2, align: 'center', sort: true },
     { field: 'type', title: '套餐类型', width: unitWidth * 4, sort: true },
     { field: 'createTime', title: '创建时间', width: unitWidth * 3, sort: true },
     { field: 'jiaofu', title: '预计交付时间', width: unitWidth * 3, filter: [{ text: '状态1', val: 1 }, { text: '状态2', val: 2 }] },
     { field: 'status', title: '背调状态', render: statusRender, width: unitWidth * 5, filter: [{ text: '状态1', val: 1 }, { text: '状态2', val: 2 }] },
-    { title: '操作', render: actionsWrapRender, width: unitWidth * 6 }
+    { title: '操作', render: actionsWrapRender, width: unitWidth * 5.5 }
   ],
   data: data,
   done: function() {
