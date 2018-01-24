@@ -23,6 +23,10 @@ const removeDuplicate = (array) => {
   return Array.from(new Set(array));
 }
 
+const isEqual = (a, b) => {
+  return JSON.stringify(a.sort()) === JSON.stringify(b.sort());
+}
+
 class ITable {
   constructor(elem) {
     this.$elem = $(elem).addClass('i-table');
@@ -101,8 +105,7 @@ class ITable {
     const hasFilter = this.$elem.find('.i-filter-wrap').length > 0;
     hasFilter && this.createFilterChooseWraps(this.$elem.find('.i-filter-wrap'));
 
-    $('.i-filter-wrap').on('click', function() {
-      if ($('.i-filter-choose-wrap').is(':visible')) return;
+    this.$elem.find('.i-filter-wrap').on('click', function() {
       const $this = $(this);
       const $th = $this.parents('th');
       const th = $th[0];
@@ -111,29 +114,31 @@ class ITable {
       const left = th.offsetLeft + this.offsetLeft;
 
       const $warp = self.$elem.find(`.i-filter-choose-wrap[data-field="${field}"]`);
-      if ($warp.is(':visible')){
-        return false;
-      } 
+      if ($warp.is(':visible')){ return false; } 
       $('.i-filter-choose-wrap').hide();
-      $warp.show();
+      $warp.show().focus();
+
       $warp.find('ul').css('top', top).css('left', left);
 
-      return false;
+      self.oldFilterStatus = [ ...self.CONFIG.filterStatus[field] ];
+
     });
 
-    $(document).on('click', function() {
-      if ($('.i-filter-choose-wrap').is(':visible')) {
-        const field = $('.i-filter-choose-wrap:visible').data('field');
+    this.$elem.find('.i-filter-choose-wrap').on('blur', function() {
+      const $this = $(this);
 
+      const field = $this.data('field');
+
+      if (!isEqual(self.CONFIG.filterStatus[field], self.oldFilterStatus)) {
         self.CONFIG.onChange(self.getStatus());
-
-        if (self.CONFIG.filterStatus[field].length > 0) {
-          self.$elem.find(`.i-table-header th[data-field="${field}"] .icon-filter`).addClass('active');
-        } else {
-          self.$elem.find(`.i-table-header th[data-field="${field}"] .icon-filter`).removeClass('active');
-        }
-        $('.i-filter-choose-wrap').hide();
       }
+      if (self.CONFIG.filterStatus[field].length > 0) {
+        self.$elem.find(`.i-table-header th[data-field="${field}"] .icon-filter`).addClass('active');
+      } else {
+        self.$elem.find(`.i-table-header th[data-field="${field}"] .icon-filter`).removeClass('active');
+      }
+
+      $this.hide();
     });
     
     // 滚动相关
@@ -329,7 +334,7 @@ class ITable {
     const pWrap = $(filter).parents('th');
     const field = pWrap.data('field');
     const status = this.CONFIG.filterStatus[field] || [];
-    const htmlStr = `<div class="i-filter-choose-wrap" data-field="${field}" style="position: absolute; top: 0px; left: 0px; width: 100%; display: none;"><ul>${arr.reduce((pre) => `${pre}<li class="cb-wrap"></li>`, '')}<li class="btn-wrap"><a class="confirm-btn">确定</a><a class="reset-btn">重置</a></li></ul></div>`;
+    const htmlStr = `<div class="i-filter-choose-wrap" tabindex="0" data-field="${field}" style="position: absolute; top: 0px; left: 0px; width: 100%; display: none;"><ul>${arr.reduce((pre) => `${pre}<li class="cb-wrap"></li>`, '')}<li class="btn-wrap"><a class="confirm-btn">确定</a><a class="reset-btn">重置</a></li></ul></div>`;
     this.$elem.append(htmlStr);
     const self = this;
     this.$elem.find(`.i-filter-choose-wrap[data-field="${field}"] li.cb-wrap`).each(function(index, li) {
