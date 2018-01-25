@@ -20,7 +20,14 @@ const getTableIndex = () => {
 
 // 数组去重
 const removeDuplicate = (array) => {
-  return Array.from(new Set(array));
+  const n = []; //一个新的临时数组 
+  //遍历当前数组 
+  for(let i = 0; i < array.length; i ++){ 
+    //如果当前数组的第i已经保存进了临时数组，那么跳过， 
+    //否则把当前项push到临时数组里面 
+    if (n.indexOf(array[i]) == -1) n.push(array[i]); 
+  } 
+  return n; 
 }
 
 const isEqual = (a, b) => {
@@ -80,6 +87,10 @@ class ITable {
     return { pager: pagerStatus, sort: sortStatus, filter: filterStatus };
   }
 
+  cancelChecked = () => {
+    this.cbs.forEach(cb => cb.check(false, false));
+  }
+
   /** 下面开始是内部使用的方法 */
   main = () => {
     const $tableBox = $('<div class="i-table-box"></div>');
@@ -119,8 +130,8 @@ class ITable {
       $warp.show().focus();
 
       $warp.find('ul').css('top', top).css('left', left);
-
-      self.oldFilterStatus = [ ...self.CONFIG.filterStatus[field] ];
+      const fitlterStatus = self.CONFIG.filterStatus[field] || [];
+      self.oldFilterStatus = [ ...fitlterStatus ];
 
     });
 
@@ -130,7 +141,7 @@ class ITable {
       const field = $this.data('field');
 
       if (!isEqual(self.CONFIG.filterStatus[field], self.oldFilterStatus)) {
-        self.CONFIG.onChange(self.getStatus());
+        typeof self.CONFIG.onChange === 'function' && self.CONFIG.onChange(self.getStatus());
       }
       if (self.CONFIG.filterStatus[field].length > 0) {
         self.$elem.find(`.i-table-header th[data-field="${field}"] .icon-filter`).addClass('active');
@@ -247,7 +258,7 @@ class ITable {
             <div class="i-table-cell ${isCheckBox ? 'i-table-cell-check-box' : ''}">
               ${isCheckBox || isCollapse ? '' : `<span>${column.title}</span>`}
               ${sort ? `<span class="i-sort-wrap"><i class="i-asc-icon ${sortStatus[field] === 'asc' ? 'active': ''}" data-sort="asc"></i><i class="i-desc-icon ${sortStatus[field] === 'desc' ? 'active': ''}" data-sort="desc"></i></span>`: ''}
-              ${filter ? `<span class="i-filter-wrap"><i class="i-table-icon icon-filter ${filterStatus[field].length > 0 ? 'active' : ''}"></i></span>`: ''}
+              ${filter ? `<span class="i-filter-wrap"><i class="i-table-icon icon-filter ${filterStatus[field] && filterStatus[field].length > 0 ? 'active' : ''}"></i></span>`: ''}
             </div>
           </th>`
         );
@@ -364,7 +375,8 @@ class ITable {
     this.$elem.find(`.i-filter-choose-wrap[data-field="${field}"] li.btn-wrap .confirm-btn`).on('click', function() {
       const $this = $(this);
 
-      self.CONFIG.onChange(self.getStatus());
+      typeof self.CONFIG.onChange === 'function' && self.CONFIG.onChange(self.getStatus());
+
       if (self.CONFIG.filterStatus[field].length > 0) {
         self.$elem.find(`.i-table-header th[data-field="${field}"] .icon-filter`).addClass('active');
       } else {
@@ -379,7 +391,8 @@ class ITable {
       const $this = $(this);
 
       self.CONFIG.filterStatus[field] = [];
-      self.CONFIG.onChange(self.getStatus());
+
+      typeof self.CONFIG.onChange === 'function' && self.CONFIG.onChange(self.getStatus());
 
       if (self.CONFIG.filterStatus[field].length > 0) {
         self.$elem.find(`.i-table-header th[data-field="${field}"] .icon-filter`).addClass('active');
@@ -426,9 +439,9 @@ class ITable {
       const data = !isHeaderTr && this.getTrData($tr);
       return (status) => {
         if (isHeaderTr) {
-          click({ checked: status.checked, type: 'all' });
+          typeof click === 'function' && click({ checked: status.checked, type: 'all' });
         } else {
-          click({ checked: status.checked, data });
+          typeof click === 'function' && click({ checked: status.checked, data });
         }
       }
     }
@@ -450,7 +463,7 @@ class ITable {
     this.onPagerChange = (pagerStatus) => {
       const sort = this.getSortStatus();
       const filter = this.getFilterStatus();
-      this.CONFIG.onChange({ pager: pagerStatus, sort, filter });
+      typeof this.CONFIG.onChange === 'function' && this.CONFIG.onChange({ pager: pagerStatus, sort, filter });
     }
     this.pager = new Pager(`#i-table-pager-${this._INDEX_}`);
     this.pager.render({ ...this.CONFIG.pager, onChange: this.onPagerChange });
@@ -471,13 +484,14 @@ class ITable {
 class ITableWrap {
   constructor(elem) {
     const table = new ITable(elem);
-    const { render, reload, destroy, getChecked, getData, getStatus } = table;
+    const { render, reload, destroy, getChecked, getData, getStatus, cancelChecked } = table;
 
     this.render = render;
     this.destroy = destroy;
     this.getChecked = getChecked;
     this.getData = getData;
     this.getStatus = getStatus;
+    this.cancelChecked = cancelChecked;
   }
 }
 
