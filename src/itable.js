@@ -30,7 +30,7 @@ const removeDuplicate = (array) => {
   return n; 
 }
 
-const isEqual = (a, b) => {
+const isEqual = (a = [], b = []) => {
   return JSON.stringify(a.sort()) === JSON.stringify(b.sort());
 }
 
@@ -139,11 +139,12 @@ class ITable {
       const $this = $(this);
 
       const field = $this.data('field');
+      const fitlterStatus = self.CONFIG.filterStatus[field] || [];
 
-      if (!isEqual(self.CONFIG.filterStatus[field], self.oldFilterStatus)) {
+      if (!isEqual(fitlterStatus, self.oldFilterStatus)) {
         typeof self.CONFIG.onChange === 'function' && self.CONFIG.onChange(self.getStatus());
       }
-      if (self.CONFIG.filterStatus[field].length > 0) {
+      if (fitlterStatus.length > 0) {
         self.$elem.find(`.i-table-header th[data-field="${field}"] .icon-filter`).addClass('active');
       } else {
         self.$elem.find(`.i-table-header th[data-field="${field}"] .icon-filter`).removeClass('active');
